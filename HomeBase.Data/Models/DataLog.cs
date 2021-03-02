@@ -10,6 +10,7 @@ namespace HomeBase.Data.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        public string SensorId { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public decimal Temperature { get; set; }
         public decimal RelativeHumidity { get; set; }

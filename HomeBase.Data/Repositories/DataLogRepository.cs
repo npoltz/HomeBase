@@ -14,7 +14,7 @@ namespace HomeBase.Data.Repositories
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
-            _dataLogs = database.GetCollection<DataLog>(settings.CollectionName);
+            _dataLogs = database.GetCollection<DataLog>("DataLogs");
         }
 
         public IList<DataLog> Get() => _dataLogs.Find(dataLog => true).ToList();
