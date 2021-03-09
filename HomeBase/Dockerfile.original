@@ -7,18 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["HomeBase/HomeBase.API.csproj", "HomeBase/"]
-COPY ["HomeBase.Core/HomeBase.Core.csproj", "HomeBase.Core/"]
-COPY ["HomeBase.Data/HomeBase.Data.csproj", "HomeBase.Data/"]
-RUN dotnet restore "HomeBase/HomeBase.API.csproj"
+COPY ["HomeBase/HomeBase.csproj", "HomeBase/"]
+RUN dotnet restore "HomeBase/HomeBase.csproj"
 COPY . .
 WORKDIR "/src/HomeBase"
-RUN dotnet build "HomeBase.API.csproj" -c Release -o /app/build
+RUN dotnet build "HomeBase.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "HomeBase.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "HomeBase.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "HomeBase.API.dll"]
+ENTRYPOINT ["dotnet", "HomeBase.dll"]

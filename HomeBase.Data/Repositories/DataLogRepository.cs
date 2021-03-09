@@ -17,9 +17,9 @@ namespace HomeBase.Data.Repositories
             _dataLogs = database.GetCollection<DataLog>("DataLogs");
         }
 
-        public IList<DataLog> Get() => _dataLogs.Find(dataLog => true).ToList();
+        public IList<DataLog> Get() => _dataLogs.Find(d => true).ToList();
 
-        public DataLog Get(string id) => _dataLogs.Find(book => book.Id == id).FirstOrDefault();
+        public DataLog Get(string id) => _dataLogs.Find(d => d.Id == id).FirstOrDefault();
 
         public DataLog Create(DataLog dataLog)
         {
@@ -27,10 +27,10 @@ namespace HomeBase.Data.Repositories
             return dataLog;
         }
 
-        public void Update(string id, DataLog bookIn) => _dataLogs.ReplaceOne(dataLog => dataLog.Id == id, bookIn);
+        public void Update(string id, DataLog dataLog) => _dataLogs.ReplaceOne(d => d.Id == id, dataLog);
 
-        public void Remove(DataLog bookIn) => _dataLogs.DeleteOne(dataLog => dataLog.Id == bookIn.Id);
+        public void Remove(DataLog dataLog) => _dataLogs.DeleteOne(d => d.Id == dataLog.Id);
 
-        public void Remove(string id) => _dataLogs.DeleteOne(dataLog => dataLog.Id == id);
+        public void Remove(string id) => _dataLogs.DeleteOne(d => d.Id == id);
     }
 }

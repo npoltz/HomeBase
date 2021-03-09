@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  homebase.api:
+    image: ${DOCKER_REGISTRY-}homebaseapi
+    build:
+      context: .
+      dockerfile: HomeBase/Dockerfile
+    network_mode: bridge
+    links:
+        - "db"
+  db:
+    image: mongo
+    volumes:
+        - db-data:/data/db
+    container_name: "mongo-01"
+    network_mode: bridge
+    ports:
+        - "27017:27017"
+
+volumes:
+   db-data:
+    external: true
