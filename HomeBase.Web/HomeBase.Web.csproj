@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HomeBase.Core\HomeBase.Core.csproj" />
+    <ProjectReference Include="..\HomeBase.Data\HomeBase.Data.csproj" />
+  </ItemGroup>
+
 </Project>

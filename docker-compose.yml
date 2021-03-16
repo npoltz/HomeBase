@@ -5,10 +5,24 @@ services:
     image: ${DOCKER_REGISTRY-}homebaseapi
     build:
       context: .
-      dockerfile: HomeBase/Dockerfile
+      dockerfile: HomeBase.Api/Dockerfile
     network_mode: bridge
+    ports:
+        - "5000:80"
     links:
         - "db"
+
+  homebase.web:
+    image: ${DOCKER_REGISTRY-}homebaseweb
+    build:
+      context: .
+      dockerfile: HomeBase.Web/Dockerfile
+    network_mode: bridge
+    ports:
+        - "5010:80"
+    links:
+        - "homebase.api"
+  
   db:
     image: mongo
     volumes:

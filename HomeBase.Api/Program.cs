@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace HomeBase
+namespace HomeBase.Api
 {
     public class Program
     {

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-namespace HomeBase
+namespace HomeBase.Api
 {
     public class Startup
     {
@@ -29,11 +29,21 @@ namespace HomeBase
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             services.AddSingleton<IRepository<DataLog>, DataLogRepository>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowOrigin",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:5010")
+                               .WithMethods("GET", "POST");
+                    });
+            });
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HomeBase", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HomeBase.Api", Version = "v1" });
             });
         }
 
@@ -44,12 +54,14 @@ namespace HomeBase
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeBase v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HomeBase.Api v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
