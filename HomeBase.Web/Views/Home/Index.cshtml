@@ -1,10 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Base";
 }
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script src="~/js/moment.min.js"></script>
+<script src="~/js/Chart.min.js"></script>
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Humidor Readings</h1>
     <canvas id="myChart" width="400" height="200"></canvas>
     <script>
         var chartCanvas = document.getElementById("myChart");
@@ -38,18 +38,25 @@
                 return e.temperature;
             });
             var humidityData = data.map(function (e) {
-                return e.relativehumidity;
+                return e.relativeHumidity;
             });
 
             var sensorData = {
                 labels: timeStampLabels,
                 datasets: [{
+                    borderColor: 'paleturquoise',
                     label: "Temperature",
+                    yAxisID: 'temperatureAxis',
                     data: temperatureData,
-                }@*,
-                {   label: "Humidity",
+                    fill: false
+                },
+                {
+                    borderColor: 'tomato',
+                    label: "Humidity",
+                    yAxisID: 'humidityAxis',
                     data: humidityData,
-                }*@]
+                    fill: false
+                }]
             };
 
             var chartOptions = {
@@ -66,22 +73,36 @@
                         type: "time",
                         time: {
                             unit: 'hour',
-                            unitStepSize: 0.5,
-                            round: 'hour',
-                            tooltipFormat: "h:mm:ss a",
+                            unitStepSize: 10,
+                            round: 'minute',
+                            tooltipFormat: "hh:mm:ss a",
                             displayFormats: {
                                 hour: 'MMM D, h:mm A'
                             }
                         }
                     }],
                     yAxes: [{
-                        gridLines: {
-                            color: "black",
-                            borderDash: [2, 5],
+                        id: 'temperatureAxis',
+                        position: 'left',
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: 40
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: "Temperature in Celcius"
+                            labelString: "Temperature"
+                        }
+                    },
+                    {
+                        id: 'humidityAxis',
+                        position: 'right',
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Relative Humidity"
                         }
                     }]
                 }
@@ -104,77 +125,4 @@
         });
 
     </script>
-    @*<script>
-            var speedCanvas = document.getElementById("myChart");
-
-            Chart.defaults.global.defaultFontFamily = "Lato";
-            Chart.defaults.global.defaultFontSize = 18;
-
-            function hoursEarlier(hours) {
-                return moment().subtract(hours, 'h').toDate();
-            };
-
-            var speedData = {
-                labels: [hoursEarlier(10), hoursEarlier(9.4), hoursEarlier(8), hoursEarlier(7), hoursEarlier(6), hoursEarlier(5), hoursEarlier(4)],
-                datasets: [{
-                    label: "Car Speed",
-                    data: [0, 59, 75, 20, 20, 55, 40],
-                    lineTension: 0.25,
-                    fill: false,
-                    borderColor: 'orange',
-                    backgroundColor: 'transparent',
-                    pointBorderColor: 'orange',
-                    pointBackgroundColor: 'rgba(255,150,0,0.5)',
-                    borderDash: [5, 5],
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    pointHitRadius: 30,
-                    pointBorderWidth: 2,
-                    pointStyle: 'rectRounded'
-                }]
-            };
-
-            var chartOptions = {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        boxWidth: 80,
-                        fontColor: 'black'
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        type: "time",
-                        time: {
-                            unit: 'hour',
-                            unitStepSize: 0.5,
-                            round: 'hour',
-                            tooltipFormat: "h:mm:ss a",
-                            displayFormats: {
-                                hour: 'MMM D, h:mm A'
-                            }
-                        }
-                    }],
-                    yAxes: [{
-                        gridLines: {
-                            color: "black",
-                            borderDash: [2, 5],
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Speed in Miles per Hour",
-                            fontColor: "green"
-                        }
-                    }]
-                }
-            };
-
-            var lineChart = new Chart(speedCanvas, {
-                type: 'line',
-                data: speedData,
-                options: chartOptions
-            });
-
-        </script>*@
 </div>

@@ -34,7 +34,7 @@ namespace HomeBase.Api
                 options.AddPolicy(name: "AllowOrigin",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:5010")
+                        builder.WithOrigins("http://localhost:5010", "http://10.0.0.250:5010")
                                .WithMethods("GET", "POST");
                     });
             });
