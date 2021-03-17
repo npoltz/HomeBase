@@ -6,12 +6,12 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["HomeBase.Api/HomeBase.Api.csproj", "HomeBase/"]
+COPY ["HomeBase.Api/HomeBase.Api.csproj", "HomeBase.Api/"]
 COPY ["HomeBase.Core/HomeBase.Core.csproj", "HomeBase.Core/"]
 COPY ["HomeBase.Data/HomeBase.Data.csproj", "HomeBase.Data/"]
-RUN dotnet restore "HomeBase/HomeBase.Api.csproj"
+RUN dotnet restore "HomeBase.Api/HomeBase.Api.csproj"
 COPY . .
-WORKDIR "/src/HomeBase"
+WORKDIR "/src/HomeBase.Api"
 RUN dotnet build "HomeBase.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
