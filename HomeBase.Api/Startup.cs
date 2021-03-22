@@ -29,16 +29,6 @@ namespace HomeBase.Api
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             services.AddSingleton<IRepository<DataLog>, DataLogRepository>();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: "AllowOrigin",
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:5010", "http://10.0.0.250:5010")
-                               .WithMethods("GET", "POST");
-                    });
-            });
-
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

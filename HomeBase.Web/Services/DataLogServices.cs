@@ -1,14 +1,11 @@
 ﻿using HomeBase.Core.Configuration;
-using HomeBase.Core.Models;
-using HomeBase.Data.Models;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HomeBase.Web.Services
 {
-    public class DataLogServices
+    public class DataLogServices : IDataLogServices
     {
         private readonly IApiConfiguration _apiConfiguration;
         private readonly HttpClient _httpClient;
@@ -19,23 +16,17 @@ namespace HomeBase.Web.Services
             _httpClient = new HttpClient();
         }
 
-        public Task<IList<IDataLog>> GetDataLogs()
+        public async Task<string> GetDataLogs()
         {
-            return Task.FromResult<IList<IDataLog>>(new List<IDataLog>
-            {
-                new DataLog{SensorId = "sensor01", Timestamp = DateTimeOffset.Now.AddMinutes(-1), RelativeHumidity = 50, Temperature = 21},
-                new DataLog{SensorId = "sensor01", Timestamp = DateTimeOffset.Now.AddMinutes(-2), RelativeHumidity = 50, Temperature = 21},
-                new DataLog{SensorId = "sensor01", Timestamp = DateTimeOffset.Now.AddMinutes(-3), RelativeHumidity = 50, Temperature = 21},
-                new DataLog{SensorId = "sensor01", Timestamp = DateTimeOffset.Now.AddMinutes(-4), RelativeHumidity = 50, Temperature = 23},
-                new DataLog{SensorId = "sensor01", Timestamp = DateTimeOffset.Now.AddMinutes(-5), RelativeHumidity = 50, Temperature = 23}
-            });
+            UriBuilder builder = new UriBuilder(_apiConfiguration.BaseUri + "/datalog");
+            builder.Query = "take=500";
 
-            /*var result = await _httpClient.GetAsync(_apiConfiguration.BaseUri);
+            var result = await _httpClient.GetAsync(builder.Uri);
 
             if (!result.IsSuccessStatusCode)
                 throw new Exception($"Received unsuccessful HTTP response from API. HTTP Response Code: {result.StatusCode}");
 
-            return await result.Content.ReadAsStream();*/
+            return await result.Content.ReadAsStringAsync();
         }
     }
 }

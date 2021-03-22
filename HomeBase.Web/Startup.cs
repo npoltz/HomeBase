@@ -1,9 +1,12 @@
+using HomeBase.Core.Configuration;
 using HomeBase.Data.Configuration;
+using HomeBase.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace HomeBase.Web
 {
@@ -20,6 +23,8 @@ namespace HomeBase.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ApiConfiguration>(Configuration.GetSection("HomeBaseApi"));
+            services.AddSingleton<IApiConfiguration>(sp => sp.GetRequiredService<IOptions<ApiConfiguration>>().Value);
+            services.AddSingleton<IDataLogServices, DataLogServices>();
             services.AddControllersWithViews();
         }
 

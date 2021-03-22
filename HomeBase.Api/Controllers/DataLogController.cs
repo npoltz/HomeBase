@@ -1,7 +1,6 @@
 ﻿using HomeBase.Core.Models;
 using HomeBase.Core.Services;
 using HomeBase.Data.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -11,7 +10,6 @@ namespace HomeBase.Controllers
 {
     [ApiController]
     [Route("/v1/datalog")]
-    [EnableCors("AllowOrigin")]
     public class DataLogController : ControllerBase
     {
         private readonly IRepository<DataLog> _repository;

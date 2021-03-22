@@ -1,34 +1,18 @@
-﻿@{
+﻿@model SensorDataViewModel
+@{
     ViewData["Title"] = "Home Base";
 }
+
 <script src="~/js/moment.min.js"></script>
 <script src="~/js/Chart.min.js"></script>
 <div class="text-center">
     <h1 class="display-4">Humidor Readings</h1>
-    <canvas id="myChart" width="400" height="200"></canvas>
+    <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
     <script>
         var chartCanvas = document.getElementById("myChart");
 
         Chart.defaults.global.defaultFontFamily = "Lato";
         Chart.defaults.global.defaultFontSize = 18;
-
-        var getJSON = function (url, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.responseType = 'json';
-
-            xhr.onload = function () {
-                var status = xhr.status;
-
-                if (status == 200) {
-                    callback(null, xhr.response);
-                } else {
-                    callback(status);
-                }
-            };
-
-            xhr.send();
-        };
 
         function buildChart(data) {
             var timeStampLabels = data.map(function (e) {
@@ -44,14 +28,14 @@
             var sensorData = {
                 labels: timeStampLabels,
                 datasets: [{
-                    borderColor: 'paleturquoise',
+                    borderColor: 'tomato',
                     label: "Temperature",
                     yAxisID: 'temperatureAxis',
                     data: temperatureData,
                     fill: false
                 },
                 {
-                    borderColor: 'tomato',
+                    borderColor: 'paleturquoise',
                     label: "Humidity",
                     yAxisID: 'humidityAxis',
                     data: humidityData,
@@ -61,7 +45,7 @@
 
             var chartOptions = {
                 legend: {
-                    display: true,
+                    display: false,
                     position: 'top',
                     labels: {
                         boxWidth: 80,
@@ -75,13 +59,14 @@
                             unit: 'hour',
                             unitStepSize: 10,
                             round: 'minute',
-                            tooltipFormat: "hh:mm:ss a",
+                            tooltipFormat: "YYYY-MM-DD hh:mm:ss a",
                             displayFormats: {
-                                hour: 'MMM D, h:mm A'
+                                hour: 'MM-DD HH:mm'
                             }
                         }
                     }],
                     yAxes: [{
+                        scaleFontSize: 10,
                         id: 'temperatureAxis',
                         position: 'left',
                         ticks: {
@@ -94,6 +79,7 @@
                         }
                     },
                     {
+                        scaleFontSize: 10,
                         id: 'humidityAxis',
                         position: 'right',
                         ticks: {
@@ -108,21 +94,15 @@
                 }
             };
 
-            var lineChart = new Chart(chartCanvas, {
+            new Chart(chartCanvas, {
                 type: 'line',
                 data: sensorData,
                 options: chartOptions
             });
         };
 
-        getJSON('http://localhost:5020/v1/datalog?take=500', function (err, data) {
-            if (err != null) {
-                console.error(err);
-            } else {
-                console.log(data);
-                buildChart(data);
-            }
-        });
-
+        var sensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.GetSensorData())));
+        console.log(sensorData);
+        buildChart(sensorData);
     </script>
 </div>
