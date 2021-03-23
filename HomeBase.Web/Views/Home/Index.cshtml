@@ -1,6 +1,6 @@
 ﻿@model SensorDataViewModel
 @{
-    ViewData["Title"] = "Home Base";
+    ViewData["Title"] = "Sensor Data";
 }
 
 <script src="~/js/moment.min.js"></script>
@@ -101,7 +101,7 @@
             });
         };
 
-        var sensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.GetSensorData())));
+        var sensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.GetSensorData("s01"))));
         console.log(sensorData);
         buildChart(sensorData);
     </script>

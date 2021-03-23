@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace HomeBase.Data.Repositories
 {
-    public class DataLogRepository : IRepository<DataLog>
+    public class DataLogRepository : IDataLogRepository<DataLog>
     {
         private readonly IMongoCollection<DataLog> _dataLogs;
 
@@ -17,7 +17,11 @@ namespace HomeBase.Data.Repositories
             _dataLogs = database.GetCollection<DataLog>("DataLogs");
         }
 
-        public IList<DataLog> Get() => _dataLogs.Find(d => true).ToList();
+        public IList<DataLog> GetDataLogsBySensorId(string sensorId, int? take) =>
+            _dataLogs.Find(d => d.SensorId == sensorId).SortByDescending(d => d.Timestamp).Limit(take).ToList();
+
+        public IList<DataLog> Get(int? take) =>
+            _dataLogs.Find(d => true).SortByDescending(d => d.Timestamp).Limit(take).ToList();
 
         public DataLog Get(string id) => _dataLogs.Find(d => d.Id == id).FirstOrDefault();
 

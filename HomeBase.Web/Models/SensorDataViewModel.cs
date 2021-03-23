@@ -12,14 +12,13 @@ namespace HomeBase.Web.Models
             _services = services;
         }
 
-        public string GetSensorData()
+        public string GetSensorData(string sensorId)
         {
             try
             {
-                var result = _services.GetDataLogs().Result;
-                return result;
+                return _services.GetDataLogs(sensorId).Result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

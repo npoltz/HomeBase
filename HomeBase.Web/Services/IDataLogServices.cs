@@ -4,6 +4,6 @@ namespace HomeBase.Web.Services
 {
     public interface IDataLogServices
     {
-        Task<string> GetDataLogs();
+        Task<string> GetDataLogs(string sensorId);
     }
 }

@@ -16,10 +16,10 @@ namespace HomeBase.Web.Services
             _httpClient = new HttpClient();
         }
 
-        public async Task<string> GetDataLogs()
+        public async Task<string> GetDataLogs(string sensorId)
         {
             UriBuilder builder = new UriBuilder(_apiConfiguration.BaseUri + "/datalog");
-            builder.Query = "take=500";
+            builder.Query = $"sensorId={sensorId}";
 
             var result = await _httpClient.GetAsync(builder.Uri);
 

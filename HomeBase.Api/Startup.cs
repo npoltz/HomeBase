@@ -27,7 +27,7 @@ namespace HomeBase.Api
         {
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-            services.AddSingleton<IRepository<DataLog>, DataLogRepository>();
+            services.AddSingleton<IDataLogRepository<DataLog>, DataLogRepository>();
 
             services.AddControllers();
 
