@@ -11,9 +11,6 @@
     <script>
         var chartCanvas = document.getElementById("myChart");
 
-        Chart.defaults.global.defaultFontFamily = "Lato";
-        Chart.defaults.global.defaultFontSize = 18;
-
         function buildChart(data) {
             var timeStampLabels = data.map(function (e) {
                 return e.timestamp;

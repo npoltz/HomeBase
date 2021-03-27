@@ -1,7 +1,9 @@
-﻿using HomeBase.Core.Services;
+﻿using HomeBase.Api.Models;
+using HomeBase.Core.Services;
 using HomeBase.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace HomeBase.Controllers
@@ -38,8 +40,16 @@ namespace HomeBase.Controllers
         /// </summary>
         /// <param name="dataLog"></param>
         [HttpPost]
-        public void Post(DataLog dataLog)
+        public void Post(DataLogDto dto)
         {
+            var dataLog = new DataLog
+            {
+                SensorId = dto.SensorId,
+                Timestamp = dto.Timestamp ?? DateTimeOffset.Now,
+                RelativeHumidity = dto.RelativeHumidity,
+                Temperature = dto.Temperature
+            };
+
             _repository.Create(dataLog);
         }
     }
