@@ -9,7 +9,6 @@ services:
     network_mode: bridge
     ports:
         - "80"
-        - "5020:80"
     links:
         - "db"
 
@@ -23,7 +22,7 @@ services:
         - "5010:80"
     links:
         - "homebase.api"
-  
+
   db:
     image: mongo
     volumes:

@@ -22,7 +22,7 @@ namespace HomeBase.Web.Controllers
 
         public IActionResult Index()
         {
-            return View(new SensorDataViewModel(_services));
+            return View(new SensorDataViewModel(_services, "s01"));
         }
 
         public IActionResult Privacy()

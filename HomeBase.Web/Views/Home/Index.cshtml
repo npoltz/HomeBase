@@ -7,6 +7,14 @@
 <script src="~/js/Chart.min.js"></script>
 <div class="text-center">
     <h1 class="display-4">Humidor Readings</h1>
+    <div>
+        <img src="~/images/time_48dp.png" width="24" height="24" class="icon-heading"/>
+        <label>Last Updated: @Model.LastUpdated</label>
+        <img src="~/images/temperature_48dp.png" width="24" height="24" class="icon-heading"/>
+        <label>Temperature: @Model.LatestTemperature</label>
+        <img src="~/images/humidity_48dp.png" width="24" height="24" class="icon-heading"/>
+        <label>Relative Humidity: @Model.LatestRelativeHumidity</label>
+    </div>
     <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
     <script>
         var chartCanvas = document.getElementById("myChart");
@@ -72,7 +80,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: "Temperature"
+                            labelString: "Temperature (°C)"
                         }
                     },
                     {
@@ -85,7 +93,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: "Relative Humidity"
+                            labelString: "Relative Humidity (%)"
                         }
                     }]
                 }
@@ -98,7 +106,7 @@
             });
         };
 
-        var sensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.GetSensorData("s01"))));
+        var sensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.JsonDataLogs)));
         console.log(sensorData);
         buildChart(sensorData);
     </script>
