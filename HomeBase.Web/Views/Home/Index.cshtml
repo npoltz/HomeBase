@@ -8,12 +8,16 @@
 <div class="text-center">
     <h1 class="display-4">Humidor Readings</h1>
     <div>
-        <img src="~/images/time_48dp.png" width="24" height="24" class="icon-heading"/>
-        <label>Last Updated: @Model.LastUpdated</label>
-        <img src="~/images/temperature_48dp.png" width="24" height="24" class="icon-heading"/>
-        <label>Temperature: @Model.LatestTemperature</label>
-        <img src="~/images/humidity_48dp.png" width="24" height="24" class="icon-heading"/>
-        <label>Relative Humidity: @Model.LatestRelativeHumidity</label>
+        <div>
+            <img src="~/images/time_48dp.png" width="24" height="24" />
+            <h6 style="display:inline">Last Updated: </h6><label>@Model.LastUpdated</label>
+        </div>
+        <div>
+            <img src="~/images/temperature_48dp.png" width="24" height="24"/>
+            <h6 style="display:inline">Temperature: </h6><label>@Model.LatestTemperature</label>
+            <img src="~/images/humidity_48dp.png" width="24" height="24" style="margin-left:20px"/>
+            <h6 style="display:inline">Relative Humidity: </h6><label>@Model.LatestRelativeHumidity</label>
+        </div>
     </div>
     <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
     <script>

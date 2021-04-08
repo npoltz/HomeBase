@@ -38,24 +38,21 @@ namespace HomeBase.Web.Models
 
                 var roundedSeconds = Math.Round(timeDiff.TotalSeconds);
                 if (roundedSeconds < 60)
-                {
-                    return $"{roundedSeconds} second{(roundedSeconds > 1 ? "s" : "")} ago";
-                }
+                    return $"{roundedSeconds} second{(roundedSeconds != 1 ? "s" : "")} ago";
 
                 var roundedMinutes = Math.Round(timeDiff.TotalMinutes);
                 if (roundedMinutes < 60)
-                {
-                    return $"{roundedMinutes} minute{(roundedMinutes > 1 ? "s" : "")} ago";
-                }
+                    return $"{roundedMinutes} minute{(roundedMinutes != 1 ? "s" : "")} ago";
 
                 var roundedHours = Math.Round(timeDiff.TotalHours);
                 if (timeDiff.TotalHours < 24)
-                {
-                    return $"{roundedHours} hour{(roundedHours > 1 ? "s" : "")} ago";
-                }
+                    return $"{roundedHours} hour{(roundedHours != 1 ? "s" : "")} ago";
 
                 var roundedDays = Math.Round(timeDiff.TotalDays);
-                return $"{roundedDays} day{(roundedDays > 1 ? "s" : "")} ago";
+                if(roundedDays == 1)
+                    return $"yesterday";
+                
+                return $"{roundedDays} days ago";
             }
         }
 
@@ -69,7 +66,6 @@ namespace HomeBase.Web.Models
                 return $"{Math.Round(_latestDataLog.Temperature, 1)}°C";
             }
         }
-
 
         public string LatestRelativeHumidity
         {
