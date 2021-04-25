@@ -2,6 +2,7 @@
 using HomeBase.Core.Services;
 using HomeBase.Data.Models;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 
 namespace HomeBase.Data.Repositories
@@ -17,8 +18,11 @@ namespace HomeBase.Data.Repositories
             _dataLogs = database.GetCollection<DataLog>("DataLogs");
         }
 
-        public IList<DataLog> GetDataLogsBySensorId(string sensorId, int? take) =>
+        public IList<DataLog> GetDataLogs(string sensorId, int? take) =>
             _dataLogs.Find(d => d.SensorId == sensorId).SortByDescending(d => d.Timestamp).Limit(take).ToList();
+
+        public IList<DataLog> GetDataLogsSince(string sensorId, DateTimeOffset sinceDateTime) =>
+            _dataLogs.Find(d => d.SensorId == sensorId && d.Timestamp >= sinceDateTime).ToList();
 
         public IList<DataLog> Get(int? take) =>
             _dataLogs.Find(d => true).SortByDescending(d => d.Timestamp).Limit(take).ToList();

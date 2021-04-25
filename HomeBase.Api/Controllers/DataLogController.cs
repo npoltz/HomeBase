@@ -1,9 +1,11 @@
 ﻿using HomeBase.Api.Models;
+using HomeBase.Core;
 using HomeBase.Core.Services;
 using HomeBase.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace HomeBase.Controllers
@@ -24,15 +26,37 @@ namespace HomeBase.Controllers
         }
 
         /// <summary>
-        /// Gets the most recent data logs for the given sensor ID.
+        /// Gets data logs for the given sensor ID since the given timestamp in the given periodicity.
         /// </summary>
         /// <param name="sensorId"></param>
         /// <param name="take"></param>
-        /// <returns>An ordered list of data logs.</returns>
+        /// <param name="sinceDateTime"></param>
+        /// <param name="periodicity"></param>
+        /// <returns>A list of data logs.</returns>
         [HttpGet]
-        public IEnumerable<DataLog> Get(string sensorId, int take = 500)
+        public IEnumerable<DataLog> GetDataLogsSince(string sensorId, int take = 500, DateTimeOffset? sinceDateTime = null, Periodicity periodicity = Periodicity.Unknown)
         {
-            return _repository.GetDataLogsBySensorId(sensorId, take);
+            IList<DataLog> dataLogs;
+
+            if (sinceDateTime == null)
+            {
+                dataLogs = _repository.GetDataLogs(sensorId, take);
+            }
+            else
+            {
+                dataLogs = _repository.GetDataLogsSince(sensorId, sinceDateTime.Value);
+            }
+
+            switch (periodicity)
+            {
+                case Periodicity.Hour:
+                case Periodicity.Day:
+                case Periodicity.Month:
+                    return GetDataLogsByPeriodicity(sensorId, periodicity, dataLogs);
+
+                default:
+                    return dataLogs;
+            }
         }
 
         /// <summary>
@@ -51,6 +75,45 @@ namespace HomeBase.Controllers
             };
 
             _repository.Create(dataLog);
+        }
+
+        private IEnumerable<DataLog> GetDataLogsByPeriodicity(string sensorId, Periodicity periodicity, IEnumerable<DataLog> dataLogs)
+        {
+            switch (periodicity)
+            {
+                case Periodicity.Hour:
+                    return dataLogs.GroupBy(d => new { d.Timestamp.Year, d.Timestamp.Month, d.Timestamp.Day, d.Timestamp.Hour })
+                        .Select(g => new
+                        DataLog
+                        {
+                            Timestamp = new DateTimeOffset(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, 0, 0, TimeSpan.Zero),
+                            RelativeHumidity = g.Average(y => y.RelativeHumidity),
+                            Temperature = g.Average(y => y.Temperature),
+                            SensorId = sensorId
+                        });
+                case Periodicity.Day:
+                    return dataLogs.GroupBy(d => new { d.Timestamp.Year, d.Timestamp.Month, d.Timestamp.Day })
+                        .Select(g => new
+                        DataLog
+                        {
+                            Timestamp = new DateTimeOffset(g.Key.Year, g.Key.Month, g.Key.Day, 0, 0, 0, TimeSpan.Zero),
+                            RelativeHumidity = g.Average(y => y.RelativeHumidity),
+                            Temperature = g.Average(y => y.Temperature),
+                            SensorId = sensorId
+                        });
+                case Periodicity.Month:
+                    return dataLogs.GroupBy(d => new { d.Timestamp.Year, d.Timestamp.Month })
+                        .Select(g => new
+                        DataLog
+                        {
+                            Timestamp = new DateTimeOffset(g.Key.Year, g.Key.Month, 1, 0, 0, 0, TimeSpan.Zero),
+                            RelativeHumidity = g.Average(y => y.RelativeHumidity),
+                            Temperature = g.Average(y => y.Temperature),
+                            SensorId = sensorId
+                        });
+                default:
+                    return dataLogs;
+            }
         }
     }
 }

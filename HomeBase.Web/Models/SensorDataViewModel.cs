@@ -1,40 +1,54 @@
 ﻿using HomeBase.Core.Models;
 using HomeBase.Data.Models;
-using HomeBase.Web.Services;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using HomeBase.Core;
 
 namespace HomeBase.Web.Models
 {
     public class SensorDataViewModel
     {
-        private readonly IDataLog _latestDataLog;
+        private string _jsonDataLogs;
 
-        public SensorDataViewModel(IDataLogServices services, string sensorId)
+        public string JsonDataLogs
         {
-            JsonDataLogs = GetSensorData(services, sensorId);
-
-            if (JsonDataLogs != null)
+            get
             {
-                DataLogs = JsonConvert.DeserializeObject<IEnumerable<DataLog>>(JsonDataLogs);
-                _latestDataLog = DataLogs.FirstOrDefault(); // The datalogs are returned from the API in descending order.
+                return _jsonDataLogs;
+            }
+            set
+            {
+                _jsonDataLogs = value;
+
+                if (value == null)
+                {
+                    DataLogs = null;
+                    LatestDataLog = null;
+                }
+                else
+                {
+                    DataLogs = JsonConvert.DeserializeObject<IEnumerable<DataLog>>(JsonDataLogs);
+                    LatestDataLog = DataLogs.Aggregate((i, j) => i.Timestamp > j.Timestamp ? i : j);
+                }
             }
         }
 
-        public string JsonDataLogs { get; }
+        public IEnumerable<IDataLog> DataLogs { get; set; }
 
-        public IEnumerable<IDataLog> DataLogs { get; }
+        public IDataLog LatestDataLog { get; set; }
+
+        public Periodicity Periodicity { get; set; }
 
         public string LastUpdated
         {
             get
             {
-                if (_latestDataLog == null)
+                if (LatestDataLog == null)
                     return "Never";
 
-                var timeDiff = DateTimeOffset.Now - _latestDataLog.Timestamp;
+                var timeDiff = DateTimeOffset.Now - LatestDataLog.Timestamp;
 
                 var roundedSeconds = Math.Round(timeDiff.TotalSeconds);
                 if (roundedSeconds < 60)
@@ -49,9 +63,9 @@ namespace HomeBase.Web.Models
                     return $"{roundedHours} hour{(roundedHours != 1 ? "s" : "")} ago";
 
                 var roundedDays = Math.Round(timeDiff.TotalDays);
-                if(roundedDays == 1)
+                if (roundedDays == 1)
                     return $"yesterday";
-                
+
                 return $"{roundedDays} days ago";
             }
         }
@@ -60,10 +74,10 @@ namespace HomeBase.Web.Models
         {
             get
             {
-                if (_latestDataLog == null)
+                if (LatestDataLog == null)
                     return "-";
 
-                return $"{Math.Round(_latestDataLog.Temperature, 1)}°C";
+                return $"{Math.Round(LatestDataLog.Temperature, 1)}°C";
             }
         }
 
@@ -71,22 +85,10 @@ namespace HomeBase.Web.Models
         {
             get
             {
-                if (_latestDataLog == null)
+                if (LatestDataLog == null)
                     return "-";
 
-                return $"{Math.Round(_latestDataLog.RelativeHumidity, 1)}%";
-            }
-        }
-
-        private string GetSensorData(IDataLogServices services, string sensorId)
-        {
-            try
-            {
-                return services.GetDataLogs(sensorId).Result;
-            }
-            catch (Exception)
-            {
-                return null;
+                return $"{Math.Round(LatestDataLog.RelativeHumidity, 1)}%";
             }
         }
     }

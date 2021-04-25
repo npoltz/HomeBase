@@ -12,6 +12,15 @@ a {
   color: #0366d6;
 }
 
+.button {
+    padding-left: 27px;
+    padding-right: 27px;
+    background-color: #fff;
+    box-shadow: none;
+    border-color: dimgrey;
+    border-width: thin;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;

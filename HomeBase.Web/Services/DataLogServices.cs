@@ -1,4 +1,5 @@
-﻿using HomeBase.Core.Configuration;
+﻿using HomeBase.Core;
+using HomeBase.Core.Configuration;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,10 +17,10 @@ namespace HomeBase.Web.Services
             _httpClient = new HttpClient();
         }
 
-        public async Task<string> GetDataLogs(string sensorId)
+        public async Task<string> GetDataLogs(string sensorId, Periodicity periodicity)
         {
             UriBuilder builder = new UriBuilder(_apiConfiguration.BaseUri + "/datalog");
-            builder.Query = $"sensorId={sensorId}";
+            builder.Query = $"sensorId={sensorId}&periodicity={periodicity}";
 
             var result = await _httpClient.GetAsync(builder.Uri);
 
