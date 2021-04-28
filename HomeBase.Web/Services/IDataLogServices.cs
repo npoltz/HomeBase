@@ -1,10 +1,10 @@
-﻿using HomeBase.Core;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using static HomeBase.Web.Enums;
 
 namespace HomeBase.Web.Services
 {
     public interface IDataLogServices
     {
-        Task<string> GetDataLogs(string sensorId, Periodicity periodicity);
+        Task<string> GetDataLogs(string sensorId, PeriodInterval periodInterval);
     }
 }

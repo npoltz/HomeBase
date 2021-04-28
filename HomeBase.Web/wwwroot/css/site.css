@@ -18,6 +18,7 @@ a {
     background-color: #fff;
     box-shadow: none;
     border-color: dimgrey;
+    outline-color: dimgrey;
     border-width: thin;
 }
 

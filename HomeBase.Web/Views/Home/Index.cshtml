@@ -10,37 +10,104 @@
     <div>
         <div>
             <img src="~/images/time_48dp.png" width="24" height="24" />
-            <h6 style="display:inline">Last Updated: </h6><label>@Model.LastUpdated</label>
+            <h6 style="display:inline">Last Updated: </h6><label id="lastUpdated">@Model.LastUpdated</label>
         </div>
         <div>
             <img src="~/images/temperature_48dp.png" width="24" height="24" />
-            <h6 style="display:inline">Temperature: </h6><label>@Model.LatestTemperature</label>
+            <h6 style="display:inline">Temperature: </h6><label id="temperature">@Model.LatestTemperature</label>
             <img src="~/images/humidity_48dp.png" width="24" height="24" style="margin-left:20px" />
-            <h6 style="display:inline">Relative Humidity: </h6><label>@Model.LatestRelativeHumidity</label>
+            <h6 style="display:inline">Relative Humidity: </h6><label id="humidity">@Model.LatestRelativeHumidity</label>
         </div>
     </div>
     <input type="button"
            class="button"
            value="Raw"
-           onclick="SetPeriodicity(0)" />
-    <input type="button"
-           class="button"
-           value="Hour"
-           onclick="SetPeriodicity(2)" />
+           onclick="SetPeriodInterval(0)" />
     <input type="button"
            class="button"
            value="Day"
-           onclick="SetPeriodicity(3)" />
+           onclick="SetPeriodInterval(1)" />
+    <input type="button"
+           class="button"
+           value="Week"
+           onclick="SetPeriodInterval(2)" />
     <input type="button"
            class="button"
            value="Month"
-           onclick="SetPeriodicity(4)" />
+           onclick="SetPeriodInterval(3)" />
+    <input type="button"
+           class="button"
+           value="Year"
+           onclick="SetPeriodInterval(4)" />
     <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
     <script>
         var chartCanvas = document.getElementById("myChart");
 
-        function buildChart(jsonSensorData) {
+        var chartOptions = {
+            legend: {
+                display: false,
+                position: 'top',
+                labels: {
+                    boxWidth: 80,
+                    fontColor: 'black'
+                }
+            },
+            scales: {
+                xAxes: [{
+                    type: "time",
+                    time: {
+                        unit: 'hour',
+                        unitStepSize: 10,
+                        round: 'minute',
+                        tooltipFormat: "YYYY-MM-DD hh:mm:ss a",
+                        displayFormats: {
+                            hour: 'MM-DD HH:mm'
+                        }
+                    }
+                }],
+                yAxes: [{
+                    scaleFontSize: 10,
+                    id: 'temperatureAxis',
+                    position: 'left',
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 40
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Temperature (°C)"
+                    }
+                },
+                {
+                    scaleFontSize: 10,
+                    id: 'humidityAxis',
+                    position: 'right',
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Relative Humidity (%)"
+                    }
+                }]
+            }
+        };
+
+        myChart = new Chart(chartCanvas, {
+            type: 'line',
+            options: chartOptions
+        });
+
+        function updateSensorData(jsonSensorData) {
             console.log(jsonSensorData);
+
+            if (jsonSensorData == null) {
+                myChart.data.datasets.pop();
+                myChart.data.datasets.pop();
+                myChart.update();
+                return;
+            }
 
             var timeStampLabels = jsonSensorData.map(function (e) {
                 return e.timestamp;
@@ -59,92 +126,49 @@
                     label: "Temperature",
                     yAxisID: 'temperatureAxis',
                     data: temperatureData,
-                    fill: false
+                    fill: false,
+                    pointRadius: 2
                 },
                 {
                     borderColor: 'paleturquoise',
                     label: "Humidity",
                     yAxisID: 'humidityAxis',
                     data: humidityData,
-                    fill: false
+                    fill: false,
+                    pointRadius: 2
                 }]
             };
 
-            var chartOptions = {
-                legend: {
-                    display: false,
-                    position: 'top',
-                    labels: {
-                        boxWidth: 80,
-                        fontColor: 'black'
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        type: "time",
-                        time: {
-                            unit: 'hour',
-                            unitStepSize: 10,
-                            round: 'minute',
-                            tooltipFormat: "YYYY-MM-DD hh:mm:ss a",
-                            displayFormats: {
-                                hour: 'MM-DD HH:mm'
-                            }
-                        }
-                    }],
-                    yAxes: [{
-                        scaleFontSize: 10,
-                        id: 'temperatureAxis',
-                        position: 'left',
-                        ticks: {
-                            suggestedMin: 0,
-                            suggestedMax: 40
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Temperature (°C)"
-                        }
-                    },
-                    {
-                        scaleFontSize: 10,
-                        id: 'humidityAxis',
-                        position: 'right',
-                        ticks: {
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Relative Humidity (%)"
-                        }
-                    }]
-                }
-            };
+            myChart.data = sensorData;
+            myChart.update();
+        }
 
-            new Chart(chartCanvas, {
-                type: 'line',
-                data: sensorData,
-                options: chartOptions
-            });
-        };
-
-        function SetPeriodicity(periodicity){
-            var url = '@Url.Action("SetPeriodicity", "Home")';
+        function SetPeriodInterval(periodInterval){
+            var url = '@Url.Action("SetPeriodInterval", "Home")';
             $.ajax({
                 dataType: "json",
                 url: url,
-                data: "periodicity=" + periodicity,
+                data: "periodInterval=" + periodInterval,
                 success: function (data) {
-                    buildChart(data);
+                    updateSensorData(data);
                 },
                 error: function (error) {
                     console.log("Error:");
                     console.log(error);
+                    myChart.data.datasets.pop();
+                    myChart.data.datasets.pop();
+                    myChart.update();
                 }
             });
         };
 
-        var jsonSensorData = JSON.parse(@Html.Raw(Json.Serialize(@Model.JsonDataLogs)));
-        buildChart(jsonSensorData);
+        var rawData = @Html.Raw(Json.Serialize(@Model.JsonDataLogs));
+        if (rawData == null || rawData == "") {
+            updateSensorData(null);
+        }
+        else {
+            var jsonSensorData = JSON.parse(rawData);
+            updateSensorData(jsonSensorData);
+        }
     </script>
 </div>

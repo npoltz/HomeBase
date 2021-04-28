@@ -34,7 +34,7 @@ namespace HomeBase.Controllers
         /// <param name="periodicity"></param>
         /// <returns>A list of data logs.</returns>
         [HttpGet]
-        public IEnumerable<DataLog> GetDataLogsSince(string sensorId, int take = 500, DateTimeOffset? sinceDateTime = null, Periodicity periodicity = Periodicity.Unknown)
+        public IEnumerable<DataLog> GetDataLogsSince(string sensorId, Periodicity periodicity = Periodicity.Unknown, DateTimeOffset? sinceDateTime = null, int take = 500)
         {
             IList<DataLog> dataLogs;
 
@@ -46,6 +46,9 @@ namespace HomeBase.Controllers
             {
                 dataLogs = _repository.GetDataLogsSince(sensorId, sinceDateTime.Value);
             }
+
+            if (!dataLogs.Any())
+                return null;
 
             switch (periodicity)
             {

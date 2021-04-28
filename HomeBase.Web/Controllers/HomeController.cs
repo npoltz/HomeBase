@@ -1,9 +1,9 @@
-﻿using HomeBase.Core;
-using HomeBase.Web.Models;
+﻿using HomeBase.Web.Models;
 using HomeBase.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using static HomeBase.Web.Enums;
 
 namespace HomeBase.Web.Controllers
 {
@@ -23,8 +23,7 @@ namespace HomeBase.Web.Controllers
             _services = services;
             _viewModel = new SensorDataViewModel
             {
-                Periodicity = Periodicity.Unknown,
-                JsonDataLogs = _services.GetDataLogs(SENSOR_ID, Periodicity.Unknown).Result
+                JsonDataLogs = _services.GetDataLogs(SENSOR_ID, PeriodInterval.Unknown).Result
             };
         }
 
@@ -33,9 +32,9 @@ namespace HomeBase.Web.Controllers
             return View(_viewModel);
         }
 
-        public IActionResult SetPeriodicity(int periodicity)
+        public IActionResult SetPeriodInterval(int periodInterval)
         {
-            var jsonDataLogs = _services.GetDataLogs(SENSOR_ID, (Periodicity)periodicity).Result;
+            var jsonDataLogs = _services.GetDataLogs(SENSOR_ID, (PeriodInterval)periodInterval).Result;
             return new ContentResult { Content = jsonDataLogs, ContentType = "application/json" };
         }
 

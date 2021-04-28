@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using HomeBase.Core;
 
 namespace HomeBase.Web.Models
 {
@@ -22,7 +21,7 @@ namespace HomeBase.Web.Models
             {
                 _jsonDataLogs = value;
 
-                if (value == null)
+                if (string.IsNullOrEmpty(value))
                 {
                     DataLogs = null;
                     LatestDataLog = null;
@@ -38,8 +37,6 @@ namespace HomeBase.Web.Models
         public IEnumerable<IDataLog> DataLogs { get; set; }
 
         public IDataLog LatestDataLog { get; set; }
-
-        public Periodicity Periodicity { get; set; }
 
         public string LastUpdated
         {
